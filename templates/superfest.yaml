@@ -1,0 +1,18 @@
+name: "Superfest Agent"
+description: "A single-agent service (sovereign agent) placing bets on Omen"
+hash: bafybeiegxvr7uzl6srgq7x36escs4jrc35cnk73ky23egfgkarp7hz6x4u
+image: https://operate.olas.network/_next/image?url=%2Fimages%2Fprediction-agent.png&w=3840&q=75
+service_version: v0.18.1
+home_chain_id: 10
+configurations:
+  100:
+    staking_program_id: pearl_beta
+    nft: bafybeig64atqaladigoc3ds4arltdu63wkdrk3gesjfvnfdmz35amv7faq
+    rpc: http://localhost:8545 # User provided
+    threshold: 1 # TODO: Move to service component
+    use_staking: false # User provided
+    cost_of_bond: 10000000000000000
+    monthly_gas_estimate: 10000000000000000000  # TODO: Where is this used
+    fund_requirements:
+      agent: 100000000000000000
+      safe: 5000000000000000000
