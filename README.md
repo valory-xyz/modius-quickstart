@@ -191,16 +191,6 @@ Then run again your service with:
 ```
 
 
-
-## Terms and Conditions Disclaimer
-
-> :warning: **Warning** <br />
-> The code within this repository is provided without any warranties. It leverages third party APIs and it is important to note that the code has not been audited for potential security vulnerabilities.
-> Using this code could potentially lead to loss of funds, compromised data, or asset risk.
-> Exercise caution and use this code at your own risk. Please refer to the [LICENSE](./LICENSE) file for details about the terms and conditions.
-
-
-
 ## What's New --- [This is to be reviewed after we have a release v.]
 
 ### Release v0.2.9???
