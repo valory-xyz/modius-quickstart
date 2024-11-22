@@ -79,8 +79,8 @@ CHAIN_ID_TO_METADATA = {
             # this means default values will be used
             "FEE_HISTORY_PERCENTILE": "50",
             "DEFAULT_PRIORITY_FEE": "2000000",
-            "MAX_PRIORITY_FEE_PER_GAS": "",
-            "MAX_FEE_PER_GAS": "",
+            "MAX_PRIORITY_FEE_PER_GAS": "3000000",
+            "MAX_FEE_PER_GAS": "20000000",
         }
     },
 }
@@ -88,6 +88,8 @@ COINGECKO_CHAIN_TO_PLATFORM_ID_MAPPING = {
     "mode":"mode"
 }
 ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
+DEFAULT_MAX_FEE = 20000000
+use_default_max_fee = True
 
 def estimate_priority_fee(
     web3_object: Web3,
@@ -394,7 +396,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeifokbnipvf4epclritybmfjteqpyqhdhtyrol65j75qq5cv47he2m",
+        "hash": "bafybeiazaphqrn65tvscbubjvuh6mzmodqp3inwayjmye2jjweu3uea7wi",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
@@ -572,10 +574,16 @@ def calculate_fund_requirement(rpc, fee_history_blocks: int, gas_amount: int, fe
 
 def fetch_agent_fund_requirement(chain_id, rpc, fee_history_blocks: int = 500000) -> int:
     gas_amount = 50_000_000
+    if use_default_max_fee:
+        return DEFAULT_MAX_FEE * gas_amount
+
     return calculate_fund_requirement(rpc, fee_history_blocks, gas_amount)
 
 def fetch_operator_fund_requirement(chain_id, rpc, fee_history_blocks: int = 500000) -> int:
     gas_amount = 30_000_000
+    if use_default_max_fee:
+        return DEFAULT_MAX_FEE * gas_amount
+
     return calculate_fund_requirement(rpc, fee_history_blocks, gas_amount)
 
 def main() -> None:
@@ -636,8 +644,6 @@ def main() -> None:
         if chain_config.ledger_config.rpc is not None:
             os.environ["CUSTOM_CHAIN_RPC"] = chain_config.ledger_config.rpc
             os.environ["OPEN_AUTONOMY_SUBGRAPH_URL"] = "https://subgraph.autonolas.tech/subgraphs/name/autonolas-staging"
-            os.environ["MAX_PRIORITY_FEE_PER_GAS"] = chain_metadata["gasParams"]["MAX_PRIORITY_FEE_PER_GAS"]
-            os.environ["MAX_FEE_PER_GAS"] = chain_metadata["gasParams"]["MAX_FEE_PER_GAS"]
 
         service_exists = manager._get_on_chain_state(chain_config) != OnChainState.NON_EXISTENT
 
@@ -786,7 +792,7 @@ def main() -> None:
         manager.fund_service(hash=service.hash, chain_id=chain_id, safe_fund_treshold=safe_fund_threshold, safe_topup=safe_topup, agent_fund_threshold=agent_fund_requirement, agent_topup=agent_fund_requirement)
 
         usdc_balance = get_erc20_balance(ledger_api, USDC_ADDRESS, address)
-        if usdc_investment_fund_requirement > 0:
+        if usdc_investment_fund_requirement > 0 and not service_exists:
             # transfer all the usdc balance into the service safe
             manager.fund_service_erc20(
                 hash=service.hash,
