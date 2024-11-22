@@ -79,8 +79,8 @@ CHAIN_ID_TO_METADATA = {
             # this means default values will be used
             "FEE_HISTORY_PERCENTILE": "50",
             "DEFAULT_PRIORITY_FEE": "2000000",
-            "MAX_PRIORITY_FEE_PER_GAS": "",
-            "MAX_FEE_PER_GAS": "",
+            "MAX_PRIORITY_FEE_PER_GAS": "20000000",
+            "MAX_FEE_PER_GAS": "3000000",
         }
     },
 }
@@ -396,7 +396,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeig7b4ca7l6ae54x6cmp4ltyyqnuhsyggw3bpswbznjzkmgytbv4pa",
+        "hash": "bafybeifokbnipvf4epclritybmfjteqpyqhdhtyrol65j75qq5cv47he2m",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
@@ -644,6 +644,8 @@ def main() -> None:
         if chain_config.ledger_config.rpc is not None:
             os.environ["CUSTOM_CHAIN_RPC"] = chain_config.ledger_config.rpc
             os.environ["OPEN_AUTONOMY_SUBGRAPH_URL"] = "https://subgraph.autonolas.tech/subgraphs/name/autonolas-staging"
+            os.environ["MAX_PRIORITY_FEE_PER_GAS"] = chain_metadata["gasParams"]["MAX_PRIORITY_FEE_PER_GAS"]
+            os.environ["MAX_FEE_PER_GAS"] = chain_metadata["gasParams"]["MAX_FEE_PER_GAS"]
 
         service_exists = manager._get_on_chain_state(chain_config) != OnChainState.NON_EXISTENT
 
