@@ -15,7 +15,7 @@ Modius trades on Balancer over the Mode chain. If you choose to run your Modius 
 Similar to its human user counterpart, Modius' time is divided in *epoch* days-periods of 24 hours. Throughout one epoch the agent:
 
 1. **Identifies trading opportunities** in investment pools advertised through campaigns on the Merkl platform across the supported DEXs.
-2. **Grabs the most interesting one and invests in it:** Starts off by picking the most convenient investment pool amongst the ones with Annual Percentage Rate (APR) higher than 5%. Switches from one investment pool to another when the corresponding APR exceeds that of the previous investment.    
+2. **Grabs the most interesting one and invests in it:** Starts off by picking the most convenient investment pool amongst the ones with Annual Percentage Yield (APY) higher than 5%. Switches from one investment pool to another when the corresponding APY exceeds that of the previous investment.    
 3. **Tracks transactions on the staking chain to accrue Olas staking rewards:** Transactions on Mode serve as key performance indicators (KPIs) for Olas Staking Rewards; in order to collect the corresponding rewards within each epoch, Modius needs to perform a well defined (as per the staking contract) number of them.
 
 
