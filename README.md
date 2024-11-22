@@ -197,7 +197,7 @@ Then run again your service with:
 
 
 
-## What's New
+## What's New --- [This is to be reviewed after we have a release v.]
 
 ### Release v0.2.9???
 Introduces Olas Modius
