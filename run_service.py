@@ -396,7 +396,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeibwo7bduh67esoxw72ok2cn6qneog7sivb66i6rhhew3hqgbnn4fe",
+        "hash": "bafybeig7b4ca7l6ae54x6cmp4ltyyqnuhsyggw3bpswbznjzkmgytbv4pa",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
@@ -644,8 +644,6 @@ def main() -> None:
         if chain_config.ledger_config.rpc is not None:
             os.environ["CUSTOM_CHAIN_RPC"] = chain_config.ledger_config.rpc
             os.environ["OPEN_AUTONOMY_SUBGRAPH_URL"] = "https://subgraph.autonolas.tech/subgraphs/name/autonolas-staging"
-            os.environ["MAX_PRIORITY_FEE_PER_GAS"] = chain_metadata["gasParams"]["MAX_PRIORITY_FEE_PER_GAS"]
-            os.environ["MAX_FEE_PER_GAS"] = chain_metadata["gasParams"]["MAX_FEE_PER_GAS"]
 
         service_exists = manager._get_on_chain_state(chain_config) != OnChainState.NON_EXISTENT
 
@@ -794,7 +792,7 @@ def main() -> None:
         manager.fund_service(hash=service.hash, chain_id=chain_id, safe_fund_treshold=safe_fund_threshold, safe_topup=safe_topup, agent_fund_threshold=agent_fund_requirement, agent_topup=agent_fund_requirement)
 
         usdc_balance = get_erc20_balance(ledger_api, USDC_ADDRESS, address)
-        if usdc_investment_fund_requirement > 0:
+        if usdc_investment_fund_requirement > 0 and not service_exists:
             # transfer all the usdc balance into the service safe
             manager.fund_service_erc20(
                 hash=service.hash,

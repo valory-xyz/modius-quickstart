@@ -1353,7 +1353,6 @@ class ServiceManager:
     ) -> Service:
         """Update a service."""
 
-        self.logger.info("-----Entering update local service-----")
         old_service = self.load_or_create(hash=old_hash)
         new_service = self.load_or_create(
             hash=new_hash, service_template=service_template
