@@ -88,6 +88,8 @@ COINGECKO_CHAIN_TO_PLATFORM_ID_MAPPING = {
     "mode":"mode"
 }
 ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
+DEFAULT_MAX_FEE = 20000000
+use_default_max_fee = True
 
 def estimate_priority_fee(
     web3_object: Web3,
@@ -394,7 +396,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeifokbnipvf4epclritybmfjteqpyqhdhtyrol65j75qq5cv47he2m",
+        "hash": "bafybeibwo7bduh67esoxw72ok2cn6qneog7sivb66i6rhhew3hqgbnn4fe",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
@@ -572,10 +574,16 @@ def calculate_fund_requirement(rpc, fee_history_blocks: int, gas_amount: int, fe
 
 def fetch_agent_fund_requirement(chain_id, rpc, fee_history_blocks: int = 500000) -> int:
     gas_amount = 50_000_000
+    if use_default_max_fee:
+        return DEFAULT_MAX_FEE * gas_amount
+
     return calculate_fund_requirement(rpc, fee_history_blocks, gas_amount)
 
 def fetch_operator_fund_requirement(chain_id, rpc, fee_history_blocks: int = 500000) -> int:
     gas_amount = 30_000_000
+    if use_default_max_fee:
+        return DEFAULT_MAX_FEE * gas_amount
+
     return calculate_fund_requirement(rpc, fee_history_blocks, gas_amount)
 
 def main() -> None:
