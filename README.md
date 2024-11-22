@@ -191,33 +191,6 @@ Then run again your service with:
 ```
 
 
-## What's New --- [This is to be reviewed after we have a release v.]
-
-### Release v0.2.9???
-Introduces Olas Modius
-- Added Mode as default chain for staking and as primary chain for investment funds
-- Removed Eth Mainnet from the pool of selectable chains due to gas costs
-- Added bridging to support Mode
-- Added investment strategy targeting Balancer investment pools on Mode
-
-
-### Release v0.2.8
-New report script added `suggest_funding_report.py`.
-For every chain it reports to the user
-- Balance in ETH
-- the gas cost, gas price per transaction (avg over last 10 transactions)
-- Forecast of gas consumption cost for next 10 transactions in ETH
-- Potentially a call to action to fund the agent
-
-### Release v0.2.7
-
-Introduces a minimum swap amount threshold (traded assets limit) configurable via script. It dynamically adjusts the initial ETH and USDC funding requirements based on this limit.
-
-### Release v0.2.6
-Token swap and bridging process is improved so that if an issue arises, the agent automatically switches to an alternative route without re-starting the bridging process. It ensures costs, such as gas fees, remain within set limits.
-
-### Release v0.2.5
-Optimus agent only proceeds with a bridge or swap transaction when both the relayer fee and gas costs are kept within reasonable limits, helping to control transaction costs.
 
 
 ## Advice for Windows users on installing Windows Subsystem for Linux version 2 (WSL2)
