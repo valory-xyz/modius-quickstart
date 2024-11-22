@@ -2,6 +2,10 @@
 <b>Olas Modius Quickstart</b>
 </h1>
 
+> :warning: **Warning** <br />
+> The code within this repository is provided without any warranties. It is important to note that the code has not been audited for potential security vulnerabilities.
+> Using this code could potentially lead to loss of funds, compromised data, or asset risk.
+> Exercise caution and use this code at your own risk. Please refer to the [LICENSE](./LICENSE) file for details about the terms and conditions.
 
 
 ## Olas Modius Agent: Functionality Overview
