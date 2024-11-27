@@ -131,10 +131,18 @@ Finally, when prompted, send the corresponding funds for gas and investment to t
 
 ### Service is Running
 
-Once the ./run_service.sh has completed, i.e. the service is running, you can check out the live logs of your Modius agent with:
+Once the ./run_service.sh has completed, i.e. the service is running, you can check out the live logs of your Modius agent.
+
+Check the name of your running container with:
 
 ```bash
-docker logs optimus_abci_0 --follow
+docker ps
+```
+
+Copy the name which should be similar to 'optimus_abci_0', then run:
+
+```bash
+docker logs [name] --follow
 ```
 
 To inspect the tree state transition of the current run of your agent run:
@@ -162,7 +170,7 @@ poetry run python report.py
 Finally, you can execute the funding report command to check out balances for each of the chains your service is deployed onto. 
 
 ```bash
-poetry run suggest_funding_report.py
+poetry run python suggest_funding_report.py
 ```
 The report will also give you insights on the latest observed gas prices per chain and, if necessary, suggest gas funding values to keep your agent active.  
 
