@@ -10,13 +10,13 @@
 
 ## Olas Modius Agent: Functionality Overview
 
-Olas Modius is an autonomous trader that operates in the crypto echosystem on users' behalf. It requires minimum intervention by you as an end user--it is enough that you fund the agent with initial investment assets and let it run. Modius will intelligentely invest crypto assets in DEXs on your behalf and grow your portfolio.
+Olas Modius is an autonomous trader that operates in the crypto ecosystem on users' behalf. It requires minimum intervention by you as an end user--it is enough that you fund the agent with initial investment assets and let it run. Modius will intelligentely invest crypto assets in DEXs on your behalf and grow your portfolio.
 
 Modius trades on Balancer over the Mode chain. If you choose to run your Modius agent with staking, in addition to trading profits Modius will also accrue rewards in Olas.
 
 
 **Operational Process:**
-Similar to its human user counterpart, Modius' time is divided in *epoch* days-periods of 24 hours. Throughout one epoch the agent:
+Similar to its human user counterpart, Modius' time is divided in *epoch* days-periods of 24 hours. Throughout one epoch, the agent:
 
 1. **Identifies trading opportunities** in investment pools advertised through campaigns on the Merkl platform across the supported DEXs.
 2. **Grabs the most interesting one and invests in it:** Starts off by picking the most convenient investment pool amongst the ones with Annual Percentage Yield (APY) higher than 5%. Switches from one investment pool to another when the corresponding APY exceeds that of the previous investment.    
@@ -26,7 +26,7 @@ Similar to its human user counterpart, Modius' time is divided in *epoch* days-p
 #### Notes:
 
 - Staking is currently in a testing phase, so the number of trader agents that can be staked is limited.
-- Within each staking period (24hrs) staking happens after the agent has reached its staking contract's KPIs. In the current agent's version, this takes approxiamtely 45 minutes of activity.
+- Within each staking period (24hrs) staking happens after the agent has reached its staking contract's KPIs. In the current agent's version, this takes approximately 45 minutes of activity.
 - In case a service becomes inactive and remains so for more than 2 staking periods (approx. 48 hours), it faces temporary eviction from the staking program and ceases to accrue additional rewards.
   
 
@@ -97,7 +97,7 @@ Do you want to increase the minimum investment amount? (y/n):
 
 **Staking**
 
-The agent will need your answer on staking. If you plan to run it as a non staking agent, please answer _n_ to the question below. Otherwise, please answer _y_ and, consequently when prompted, fund your agent with the required number of bridged Olas in the target staking chain.
+The agent will need your answer on staking. If you plan to run it as a non-staking agent, please answer _n_ to the question below. Otherwise, please answer _y_ and, consequently when prompted, fund your agent with the required number of bridged Olas in the target staking chain.
 
 ```bash
 Do you want to stake your service? (y/n):
@@ -167,7 +167,7 @@ poetry run suggest_funding_report.py
 The report will also give you insights on the latest observed gas prices per chain and, if necessary, suggest gas funding values to keep your agent active.  
 
 
-**Stoppping your agent**
+**Stopping your agent**
 To stop your agent, use:
 
 ```bash
