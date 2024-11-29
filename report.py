@@ -142,6 +142,11 @@ def generate_report():
                 usdc_balance_formatted = safe_info.get('usdc_balance_formatted', 'N/A')
                 _print_status("USDC Balance", usdc_balance_formatted)
             
+            # Check for OLAS balance on Staking chain
+            if chain_name.lower() == optimus_config.staking_chain:
+                olas_balance_formatted = safe_info.get('olas_balance_formatted', 'N/A')
+                _print_status("OLAS Balance", olas_balance_formatted)
+            
             # Low balance check
             safe_threshold_wei = chain_config.get("chain_data", {}).get("user_params", {}).get("fund_requirements", {}).get("safe")
             if safe_threshold_wei:
