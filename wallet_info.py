@@ -29,13 +29,15 @@ getcontext().prec = 18
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
-USDC_ABI = [{
+TOKEN_ABI = [{
     "constant": True,
     "inputs": [{"name": "_owner", "type": "address"}],
     "name": "balanceOf",
     "outputs": [{"name": "balance", "type": "uint256"}],
     "type": "function"
 }]
+
+OLAS_ADDRESS = "0xcfD1D50ce23C46D3Cf6407487B2F8934e96DC8f9"
 
 def load_config():
     try:
@@ -69,13 +71,22 @@ def get_balance(web3, address):
 
 def get_usdc_balance(web3, address, chain_name):
     try:
-        usdc_contract = web3.eth.contract(address=USDC_ADDRESS, abi=USDC_ABI)
+        usdc_contract = web3.eth.contract(address=USDC_ADDRESS, abi=TOKEN_ABI)
         balance = usdc_contract.functions.balanceOf(address).call()
         return Decimal(balance) / Decimal(1e6)  # USDC has 6 decimal places
     except Exception as e:
         print(f"Error getting USDC balance for address {address}: {e}")
         return Decimal(0)
 
+def get_olas_balance(web3, address, chain_name):
+    try:
+        olas_address = OLAS_ADDRESS[chain_name]
+        olas_contract = web3.eth.contract(address=OLAS_ADDRESS, abi=TOKEN_ABI)
+        balance = olas_contract.functions.balanceOf(address).call()
+        return Decimal(balance) / Decimal(1e18)  # OLAS has 18 decimal places
+    except Exception as e:
+        print(f"Error getting OLAS balance for address {address}: {e}")
+        return Decimal(0)
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, Decimal):
@@ -147,6 +158,12 @@ def save_wallet_info():
                 usdc_balance = get_usdc_balance(web3, safe_address, chain_name.lower())
                 safe_balances[chain_name]["usdc_balance"] = usdc_balance
                 safe_balances[chain_name]["usdc_balance_formatted"] = f"{usdc_balance:.2f} USDC"
+
+            # Get USDC balance for Principal Chain
+            if chain_name.lower() == optimus_config.staking_chain:
+                olas_balance = get_olas_balance(web3, safe_address, chain_name.lower())
+                safe_balances[chain_name]["olas_balance"] = usdc_balance
+                safe_balances[chain_name]["olas_balance_formatted"] = f"{olas_balance:.6f} OLAS"
 
         except Exception as e:
             print(f"An error occurred while processing chain ID {chain_id}: {e}")

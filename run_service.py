@@ -19,6 +19,9 @@
 """Olas Modius Quickstart script."""
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
+import sys
+import tty
+import termios
 import getpass
 import json
 import os
@@ -29,6 +32,7 @@ import math
 from dataclasses import dataclass
 from pathlib import Path
 from decimal import Decimal, ROUND_UP
+from enum import Enum
 
 import requests
 import yaml
@@ -91,6 +95,11 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 DEFAULT_MAX_FEE = 20000000
 use_default_max_fee = True
 
+class Strategy(Enum):
+    """Strategy type"""
+    MerklPoolSearchStrategy = "merkl_pools_search"
+    BalancerPoolSearchStrategy = "balancer_pools_search"
+
 def estimate_priority_fee(
     web3_object: Web3,
     block_number: int,
@@ -128,6 +137,32 @@ def estimate_priority_fee(
 
     return values[len(values) // 2]
 
+def get_masked_input(prompt: str) -> str:
+    """Get user input while masking it with asterisks."""
+    password = ""
+    sys.stdout.write(prompt)
+    sys.stdout.flush()
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(fd)
+        while True:
+            char = sys.stdin.read(1)
+            if char == '\r' or char == '\n':
+                break
+            if char == '\x7f':
+                if password:
+                    password = password[:-1]
+                    sys.stdout.write('\b \b')
+            else:
+                password += char
+                sys.stdout.write('*')
+            sys.stdout.flush()
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    sys.stdout.write('\n')
+    return password
+
 @dataclass
 class OptimusConfig(LocalResource):
     """Local configuration."""
@@ -146,6 +181,7 @@ class OptimusConfig(LocalResource):
     staking_chain: t.Optional[str] = None
     principal_chain: t.Optional[str] = None
     investment_funding_requirements: t.Optional[Dict[str, Any]] = None
+    selected_strategies: t.Optional[list[str]] = None
 
     @classmethod
     def from_json(cls, obj: t.Dict) -> "LocalResource":
@@ -284,22 +320,22 @@ def configure_local_config() -> OptimusConfig:
 
     if optimus_config.tenderly_access_key is None:
         print_section("Tenderly API Configuration and Price Data Source")
-        optimus_config.tenderly_access_key = input(
+        optimus_config.tenderly_access_key = get_masked_input(
             "Please enter your Tenderly API Key. Get one at https://dashboard.tenderly.co/: "
         )
 
     if optimus_config.tenderly_account_slug is None:
-        optimus_config.tenderly_account_slug = input(
+        optimus_config.tenderly_account_slug = get_masked_input(
             "Please enter your Tenderly Account Slug: "
         )
 
     if optimus_config.tenderly_project_slug is None:
-        optimus_config.tenderly_project_slug = input(
+        optimus_config.tenderly_project_slug = get_masked_input(
             "Please enter your Tenderly Project Slug: "
         )
 
     if optimus_config.coingecko_api_key is None:
-        optimus_config.coingecko_api_key = input(
+        optimus_config.coingecko_api_key = get_masked_input(
             "Please enter your CoinGecko API Key. Get one at https://www.coingecko.com/: "
         )
         print()
@@ -358,9 +394,12 @@ def configure_local_config() -> OptimusConfig:
 
     if optimus_config.mode_rpc is None:
         print_section("Chain RPC")
-        optimus_config.mode_rpc = input("Please enter a Mode RPC URL: ")
+        optimus_config.mode_rpc = get_masked_input("Please enter a Mode RPC URL: ")
 
         print()
+
+    if optimus_config.selected_strategies is None:
+        optimus_config.selected_strategies = [Strategy.MerklPoolSearchStrategy.value, Strategy.BalancerPoolSearchStrategy.value]
 
     optimus_config.store()
     return optimus_config
@@ -396,7 +435,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeiazaphqrn65tvscbubjvuh6mzmodqp3inwayjmye2jjweu3uea7wi",
+        "hash": "bafybeierrvod33ljm2lmuzmdc4bdyke57jlylpa3dwvnnbxsdu7z23f5um",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
@@ -579,8 +618,12 @@ def fetch_agent_fund_requirement(chain_id, rpc, fee_history_blocks: int = 500000
 
     return calculate_fund_requirement(rpc, fee_history_blocks, gas_amount)
 
-def fetch_operator_fund_requirement(chain_id, rpc, fee_history_blocks: int = 500000) -> int:
-    gas_amount = 30_000_000
+def fetch_operator_fund_requirement(chain_id, rpc, service_exists: bool = True, fee_history_blocks: int = 500000) -> int:
+    if service_exists:
+        gas_amount = 5_000_000
+    else:
+        gas_amount = 30_000_000
+
     if use_default_max_fee:
         return DEFAULT_MAX_FEE * gas_amount
 
@@ -666,7 +709,7 @@ def main() -> None:
         if agent_fund_requirement is None:
             agent_fund_requirement = chain_config.chain_data.user_params.fund_requirements.agent
 
-        operational_fund_req = fetch_operator_fund_requirement(chain_id, chain_config.ledger_config.rpc)
+        operational_fund_req = fetch_operator_fund_requirement(chain_id, chain_config.ledger_config.rpc, service_exists)
         if operational_fund_req is None:
             operational_fund_req = chain_metadata.get("operationalFundReq")
 
@@ -831,7 +874,8 @@ def main() -> None:
         "MIN_SWAP_AMOUNT_THRESHOLD": optimus_config.min_swap_amount_threshold,
         "ALLOWED_CHAINS": json.dumps(optimus_config.allowed_chains),
         "TARGET_INVESTMENT_CHAINS": json.dumps(optimus_config.target_investment_chains),
-        "INITIAL_ASSETS": json.dumps(initial_assets)
+        "INITIAL_ASSETS": json.dumps(initial_assets),
+        "SELECTED_STRATEGIES": json.dumps(optimus_config.selected_strategies)
     }
     apply_env_vars(env_vars)
     print("Skipping local deployment")
