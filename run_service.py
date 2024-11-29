@@ -29,6 +29,7 @@ import math
 from dataclasses import dataclass
 from pathlib import Path
 from decimal import Decimal, ROUND_UP
+from enum import Enum
 
 import requests
 import yaml
@@ -91,6 +92,11 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 DEFAULT_MAX_FEE = 20000000
 use_default_max_fee = True
 
+class Strategy(Enum):
+    """Strategy type"""
+    MerklPoolSearchStrategy = "lp_strategy"
+    BalancerPoolSearchStrategy = "balancer_strategy"
+
 def estimate_priority_fee(
     web3_object: Web3,
     block_number: int,
@@ -146,6 +152,7 @@ class OptimusConfig(LocalResource):
     staking_chain: t.Optional[str] = None
     principal_chain: t.Optional[str] = None
     investment_funding_requirements: t.Optional[Dict[str, Any]] = None
+    selected_strategies: t.Optional[list[str]] = None
 
     @classmethod
     def from_json(cls, obj: t.Dict) -> "LocalResource":
@@ -362,6 +369,9 @@ def configure_local_config() -> OptimusConfig:
 
         print()
 
+    if optimus_config.selected_strategies is None:
+        optimus_config.selected_strategies = [Strategy.MerklPoolSearchStrategy.value, Strategy.BalancerPoolSearchStrategy.value]
+
     optimus_config.store()
     return optimus_config
 
@@ -396,7 +406,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeiazaphqrn65tvscbubjvuh6mzmodqp3inwayjmye2jjweu3uea7wi",
+        "hash": "bafybeigy6gpuds4eu2khotxa2e6yibt4dyk54pds3psa7atug27h62t6vu",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
@@ -831,7 +841,8 @@ def main() -> None:
         "MIN_SWAP_AMOUNT_THRESHOLD": optimus_config.min_swap_amount_threshold,
         "ALLOWED_CHAINS": json.dumps(optimus_config.allowed_chains),
         "TARGET_INVESTMENT_CHAINS": json.dumps(optimus_config.target_investment_chains),
-        "INITIAL_ASSETS": json.dumps(initial_assets)
+        "INITIAL_ASSETS": json.dumps(initial_assets),
+        "SELECTED_STRATEGIES": json.dumps(optimus_config.selected_strategies)
     }
     apply_env_vars(env_vars)
     print("Skipping local deployment")
