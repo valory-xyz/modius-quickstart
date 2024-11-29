@@ -19,6 +19,9 @@
 """Olas Modius Quickstart script."""
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
+import sys
+import tty
+import termios
 import getpass
 import json
 import os
@@ -133,6 +136,32 @@ def estimate_priority_fee(
         values = values[highest_increase_index:]
 
     return values[len(values) // 2]
+
+def get_masked_input(prompt: str) -> str:
+    """Get user input while masking it with asterisks."""
+    password = ""
+    sys.stdout.write(prompt)
+    sys.stdout.flush()
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(fd)
+        while True:
+            char = sys.stdin.read(1)
+            if char == '\r' or char == '\n':
+                break
+            if char == '\x7f':
+                if password:
+                    password = password[:-1]
+                    sys.stdout.write('\b \b')
+            else:
+                password += char
+                sys.stdout.write('*')
+            sys.stdout.flush()
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    sys.stdout.write('\n')
+    return password
 
 @dataclass
 class OptimusConfig(LocalResource):
@@ -291,22 +320,22 @@ def configure_local_config() -> OptimusConfig:
 
     if optimus_config.tenderly_access_key is None:
         print_section("Tenderly API Configuration and Price Data Source")
-        optimus_config.tenderly_access_key = input(
+        optimus_config.tenderly_access_key = get_masked_input(
             "Please enter your Tenderly API Key. Get one at https://dashboard.tenderly.co/: "
         )
 
     if optimus_config.tenderly_account_slug is None:
-        optimus_config.tenderly_account_slug = input(
+        optimus_config.tenderly_account_slug = get_masked_input(
             "Please enter your Tenderly Account Slug: "
         )
 
     if optimus_config.tenderly_project_slug is None:
-        optimus_config.tenderly_project_slug = input(
+        optimus_config.tenderly_project_slug = get_masked_input(
             "Please enter your Tenderly Project Slug: "
         )
 
     if optimus_config.coingecko_api_key is None:
-        optimus_config.coingecko_api_key = input(
+        optimus_config.coingecko_api_key = get_masked_input(
             "Please enter your CoinGecko API Key. Get one at https://www.coingecko.com/: "
         )
         print()
@@ -365,7 +394,7 @@ def configure_local_config() -> OptimusConfig:
 
     if optimus_config.mode_rpc is None:
         print_section("Chain RPC")
-        optimus_config.mode_rpc = input("Please enter a Mode RPC URL: ")
+        optimus_config.mode_rpc = get_masked_input("Please enter a Mode RPC URL: ")
 
         print()
 
