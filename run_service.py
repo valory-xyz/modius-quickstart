@@ -44,7 +44,7 @@ from halo import Halo
 from termcolor import colored
 from web3 import Web3
 from web3.types import Wei, TxParams
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from operate.account.user import UserAccount
 from operate.cli import OperateApp
@@ -436,7 +436,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeieeex4vf4a3pj7ly563rxjrph5diylm2rr7qcvaks3ofqfvzxkjna",
+        "hash": "bafybeigp444eluxn77x5qdtuqok45gbhrg7l2ptdgntafldbay3x7bpsja",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
@@ -450,7 +450,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
                     "nft": "bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
                     "cost_of_bond": COST_OF_BOND_STAKING if config.staking_chain == "mode" else COST_OF_BOND,
                     "threshold": 1,
-                    "use_staking": config.use_staking and config.staking_chain == "mode", ###
+                    "use_staking": config.use_staking and config.staking_chain == "mode",
                     "fund_requirements": FundRequirementsTemplate(
                         {
                             "agent": SUGGESTED_TOP_UP_DEFAULT * 5,
@@ -591,26 +591,59 @@ def fetch_investing_funding_requirements(chain_name: str) -> None:
 
     optimus_config.store()
 
-def calculate_fund_requirement(rpc, fee_history_blocks: int, gas_amount: int, fee_history_percentile: int = 50, priority_fee_increase_boundary: int = 200) -> int:
-    if rpc is None:
+def calculate_fund_requirement(
+    rpc: str, 
+    fee_history_blocks: int, 
+    gas_amount: int, 
+    fee_history_percentile: int = 50, 
+    safety_margin: int = 500_000_000_000_000
+) -> Optional[int]:
+    """
+    Calculate the estimated fund requirement for a transaction.
+
+    Args:
+        rpc (str): RPC URL of the Ethereum node.
+        fee_history_blocks (int): Number of recent blocks for fee history.
+        gas_amount (int): Gas amount required for the transaction.
+        fee_history_percentile (int): Percentile for priority fee (default: 50).
+        safety_margin (int): Safety margin in wei (default: 500,000,000,000,000).
+
+    Returns:
+        Optional[int]: Estimated fund requirement in wei, or None if unavailable.
+    """
+    if not rpc:
+        print("RPC URL is required.")
         return None
-    
-    web3 = Web3(Web3.HTTPProvider(rpc))
-    block_number = web3.eth.block_number
-    latest_block = web3.eth.get_block("latest")
-    base_fee = latest_block.get("baseFeePerGas")
-    
-    if base_fee is None or block_number is None:
+
+    try:
+        web3 = Web3(Web3.HTTPProvider(rpc))
+        block_number = web3.eth.block_number
+        fee_history = web3.eth.fee_history(
+            fee_history_blocks, block_number, [fee_history_percentile]
+        )
+    except Exception as e:
         return None
-    
-    priority_fee = estimate_priority_fee(web3, block_number, fee_history_blocks, fee_history_percentile, priority_fee_increase_boundary)
-    if priority_fee is None:
+
+    if not fee_history or 'baseFeePerGas' not in fee_history:
         return None
-    
-    gas_price = base_fee + priority_fee
-    safety_margin = 500_000_000_000_000
-    fund_requirement = int((gas_price * gas_amount) + safety_margin)
-    return fund_requirement
+
+    base_fees = fee_history.get('baseFeePerGas', [])
+    priority_fees = [reward[0] for reward in fee_history.get('reward', []) if reward]
+
+    if not base_fees or not priority_fees:
+        return None
+
+    try:
+        # Calculate averages
+        average_base_fee = sum(base_fees) / len(base_fees)
+        average_priority_fee = sum(priority_fees) / len(priority_fees)
+        average_gas_price = average_base_fee + average_priority_fee
+
+        # Calculate fund requirement
+        fund_requirement = int((average_gas_price * gas_amount) + safety_margin)
+        return fund_requirement
+    except Exception as e:
+        return None
 
 def fetch_agent_fund_requirement(chain_id, rpc, fee_history_blocks: int = 500000) -> int:
     gas_amount = 50_000_000
