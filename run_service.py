@@ -143,6 +143,7 @@ def get_masked_input(prompt: str) -> str:
     password = ""
     sys.stdout.write(prompt)
     sys.stdout.flush()
+    
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
@@ -249,7 +250,6 @@ def ask_confirm_password() -> str:
     else:
         print("Passwords do not match. Terminating.")
         sys.exit(1)
-
 
 def check_rpc(rpc_url: str) -> None:
     spinner = Halo(text=f"Checking RPC...", spinner="dots")
