@@ -93,7 +93,7 @@ COINGECKO_CHAIN_TO_PLATFORM_ID_MAPPING = {
 }
 ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 DEFAULT_MAX_FEE = 20000000
-use_default_max_fee = True
+use_default_max_fee = False
 
 class Strategy(Enum):
     """Strategy type"""
@@ -436,7 +436,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeias4woazmeyihuojumr6d5o7iohmmyxpnkjeq4bytytd7wwjmofeu",
+        "hash": "bafybeie7xkxwpvcplmx7tguldaphkknyhqvzdmwbxt7ileyuhrcr246vce",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
