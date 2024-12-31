@@ -80,7 +80,6 @@ def get_usdc_balance(web3, address, chain_name):
 
 def get_olas_balance(web3, address, chain_name):
     try:
-        olas_address = OLAS_ADDRESS[chain_name]
         olas_contract = web3.eth.contract(address=OLAS_ADDRESS, abi=TOKEN_ABI)
         balance = olas_contract.functions.balanceOf(address).call()
         return Decimal(balance) / Decimal(1e18)  # OLAS has 18 decimal places
