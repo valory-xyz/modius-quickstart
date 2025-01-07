@@ -93,7 +93,7 @@ COINGECKO_CHAIN_TO_PLATFORM_ID_MAPPING = {
 }
 ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 DEFAULT_MAX_FEE = 20000000
-use_default_max_fee = True
+use_default_max_fee = False
 
 class Strategy(Enum):
     """Strategy type"""
@@ -400,7 +400,7 @@ def configure_local_config() -> OptimusConfig:
         print()
 
     if optimus_config.selected_strategies is None:
-        optimus_config.selected_strategies = [Strategy.MerklPoolSearchStrategy.value, Strategy.BalancerPoolSearchStrategy.value, Strategy.SturdyLendingStrategy.value]
+        optimus_config.selected_strategies = [Strategy.BalancerPoolSearchStrategy.value, Strategy.SturdyLendingStrategy.value]
 
     optimus_config.store()
     return optimus_config
@@ -436,7 +436,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeihqho73he6mirkodg4ubom6ngf2nkgebhmxr435yxpsxgsthu5nvy",
+        "hash": "bafybeiecfjuj3s34wsn2tavzblkvqow43oj3ljmtfueikkyql7r5e3gl7m",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
