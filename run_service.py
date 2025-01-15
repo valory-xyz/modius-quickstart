@@ -436,7 +436,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeihqho73he6mirkodg4ubom6ngf2nkgebhmxr435yxpsxgsthu5nvy",
+        "hash": "bafybeig5uqagio2k2f3zuzhw3pnpy2xg2gqz6w55l3p4blchoxmvqswwze",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
@@ -869,7 +869,7 @@ def main() -> None:
         manager.fund_service(hash=service.hash, chain_id=chain_id, safe_fund_treshold=safe_fund_threshold, safe_topup=safe_topup, agent_fund_threshold=agent_fund_requirement, agent_topup=agent_fund_requirement)
 
         usdc_balance = get_erc20_balance(ledger_api, USDC_ADDRESS, address)
-        if usdc_investment_fund_requirement > 0 and usdc_balance:
+        if usdc_investment_fund_requirement > 0 and not service_exists:
             # transfer all the usdc balance into the service safe
             manager.fund_service_erc20(
                 hash=service.hash,
