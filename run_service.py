@@ -436,7 +436,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeig5uqagio2k2f3zuzhw3pnpy2xg2gqz6w55l3p4blchoxmvqswwze",
+        "hash": "bafybeiefvkhutqcaw4h6bhzok7pc25hmcyvgce6oqel7mj5ro6nqm2x55q",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
@@ -901,7 +901,7 @@ def main() -> None:
         "TENDERLY_ACCESS_KEY": optimus_config.tenderly_access_key,
         "TENDERLY_ACCOUNT_SLUG": optimus_config.tenderly_account_slug,
         "TENDERLY_PROJECT_SLUG": optimus_config.tenderly_project_slug,
-        "STAKING_TOKEN_CONTRACT_ADDRESS": STAKING[home_chain_type][target_staking_program_id], #### and add params staking_token_activity_checker --> in service default values and staking_chain
+        "STAKING_TOKEN_CONTRACT_ADDRESS": "0x534C0A05B6d4d28d5f3630D6D74857B253cf8332", #### and add params staking_token_activity_checker --> in service default values and staking_chain
         "COINGECKO_API_KEY": optimus_config.coingecko_api_key,
         "STAKING_CHAIN": optimus_config.staking_chain,
         "STAKING_ACTIVITY_CHECKER_CONTRACT_ADDRESS": activity_checker_dict.get(home_chain_type.name.lower(), ""),
