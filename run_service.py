@@ -436,7 +436,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeiefvkhutqcaw4h6bhzok7pc25hmcyvgce6oqel7mj5ro6nqm2x55q",
+        "hash": "bafybeigze75dsdbqb3uf5mutdaquvh2lxaga25ybvf7npmkome3gvxqqcu",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
