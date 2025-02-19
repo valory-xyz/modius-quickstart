@@ -436,7 +436,7 @@ def get_service_template(config: OptimusConfig) -> ServiceTemplate:
     home_chain_id = "34443"
     return ServiceTemplate({
         "name": "Optimus",
-        "hash": "bafybeigze75dsdbqb3uf5mutdaquvh2lxaga25ybvf7npmkome3gvxqqcu",
+        "hash": "bafybeifl56xp3o26zb6uaoyeg2pwoduhnm22ukjcv5wcj32tswibsikosa",
 
         "description": "Optimus",
         "image": "https://gateway.autonolas.tech/ipfs/bafybeiaakdeconw7j5z76fgghfdjmsr6tzejotxcwnvmp3nroaw3glgyve",
@@ -904,7 +904,7 @@ def main() -> None:
         "STAKING_TOKEN_CONTRACT_ADDRESS": "0x534C0A05B6d4d28d5f3630D6D74857B253cf8332", #### and add params staking_token_activity_checker --> in service default values and staking_chain
         "COINGECKO_API_KEY": optimus_config.coingecko_api_key,
         "STAKING_CHAIN": optimus_config.staking_chain,
-        "STAKING_ACTIVITY_CHECKER_CONTRACT_ADDRESS": activity_checker_dict.get(home_chain_type.name.lower(), ""),
+        "ACTIVITY_CHECKER_CONTRACT_ADDRESS": activity_checker_dict.get(home_chain_type.name.lower(), ""),
         "MIN_SWAP_AMOUNT_THRESHOLD": optimus_config.min_swap_amount_threshold,
         "ALLOWED_CHAINS": json.dumps(optimus_config.allowed_chains),
         "TARGET_INVESTMENT_CHAINS": json.dumps(optimus_config.target_investment_chains),
