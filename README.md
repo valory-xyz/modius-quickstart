@@ -1,4 +1,14 @@
 <h1 align="center">
+<b> 🚨 WARNING: Repository is deprecated 🚨</b>
+</h1>
+
+<p align="center">
+This repository has been deprecated and will not be supported until further notice.
+<br>
+Please use <a href="https://github.com/valory-xyz/quickstart/">the new Quickstart</a>.
+</p>
+
+<h1 align="center">
 <b>Olas Modius Quickstart</b>
 </h1>
 
