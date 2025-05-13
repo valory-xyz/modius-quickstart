@@ -6,6 +6,8 @@
 This repository has been deprecated and will not be supported until further notice.
 <br>
 Please use <a href="https://github.com/valory-xyz/quickstart/">the new Quickstart</a>.
+<br>
+If you are already running agents using this quickstart, please use the <a href="https://github.com/valory-xyz/quickstart/blob/main/scripts/modius/README.md#migrate-from-modius-quickstart">Migration Script</a> to migrate your agents to the new Quickstart.
 </p>
 
 <h1 align="center">
